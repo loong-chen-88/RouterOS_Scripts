@@ -1,0 +1,26 @@
+:local routerName [/system identity get name]
+:local InstalledVersion [/system package update get installed-version]
+:local LatestVersion [/system package update get latest-version]
+:local Date [/system clock get date]
+:local Time [/system clock get time]
+:local Day [:pick $Date 4 6]
+:local Month [:pick $Date 0 3]
+:local Year [:pick $Date 7 11]
+:local Convert ([:find jan,feb,mar,apr,may,jun,jul,aug,sep,oct,nov,dec [:pick $Date 0 3]]+1);
+:if ($Convert <=9) do={
+:set Convert ("0".$Convert)}
+:set Data ($routerName." ".$Year.$Convert.$Day);
+/system backup save name=$Date
+:log warning "Backup was successful"
+:local Domain "smtp.163.com"
+:local Port "25"
+:local User "from@163.com"
+:local PassWord "password"
+:local ToUser "to@163.com"
+:local FromUser "from@163.com"
+:local Subject ("$Date $Time backup")
+:local Message ("MikroTik RouterOS \n InstalledVersion: $InstalledVersion \n LatestVersion: $LatestVersion")
+:local Host [:resolve $SERVER]
+/tool e-mail set address=$Host port=$Port from=$FromUser user=$User password=$PassWord
+/tool e-mail send to=$ToUser from=$FromUser subject=$Subject body=$Message file=$Data
+:log warning "backup file sent to $ToUser"
