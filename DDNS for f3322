@@ -22,6 +22,7 @@
 #如果PPPOE-OUT1掉线状态则更新PPPOE-OUT2#
 ######################################
 :do {
+:local ether
 :local USE "root"
 :local PWD "password"
 :local DOMAIN "example.f3322.net"
